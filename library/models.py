@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime,timedelta
+from django.utils import timezone
 
 class StudentExtra(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
@@ -57,7 +58,7 @@ class IssuedBook(models.Model):
     #isbn=[(str(book.isbn),book.name+' ['+str(book.isbn)+']') for book in Book.objects.all()]
     # isbn=models.CharField(max_length=30)
     book = models.ForeignKey(Book,on_delete=models.CASCADE,null=True,blank=True)
-    issuedate=models.DateField(auto_now=True)
+    issuedate=models.DateField(auto_now=False)
     expirydate=models.DateField(default=get_expiry)
     def __str__(self):
         return str(self.student)
@@ -76,5 +77,27 @@ class IssuedBook(models.Model):
 
 def expiry():
     return datetime.today() + timedelta(days=14)
+
+class Fine(models.Model):
+    student=models.ForeignKey(StudentExtra,on_delete=models.CASCADE)
+    issue=models.ForeignKey(IssuedBook,on_delete=models.CASCADE)
+    amount=models.DecimalField(default=0.00,max_digits=10,decimal_places=2)
+    paid=models.BooleanField(default=False)
+    order_id = models.CharField(unique=True, max_length=500, null=True, blank=True, default=None) 
+    datetime_of_payment = models.DateTimeField(auto_now=False,null=True,blank=True)
+    
+    # related to razorpay
+    razorpay_order_id = models.CharField(max_length=500, null=True, blank=True)
+    razorpay_payment_id = models.CharField(max_length=500, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=500, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.order_id is None :
+            self.order_id = "{}_{}_{}".format(self.student.department,self.student.student_id.username,timezone.now().strftime('%H%M%S') )  
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "{} fine->{}".format(self.issue,self.amount)
+
 
 
