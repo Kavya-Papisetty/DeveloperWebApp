@@ -38,5 +38,8 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name="password_reset_confirm"),
 
     path('reset_password_complete/',auth_views.PasswordResetCompleteView.as_view(),name="password_reset_complete"),
-   
+    path('my-fines/',views.myfines, name = 'my-fines'),
+    path('payfines/<int:fineID>/',views.payfine,name = 'payfines'),
+    path('paystatus/<int:fineID>/',views.pay_status, name = 'paystatus'),
+    path('all-fines/',views.allfines, name = 'all-fines'),
 ]
