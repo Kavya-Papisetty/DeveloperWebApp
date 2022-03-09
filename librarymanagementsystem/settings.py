@@ -137,3 +137,6 @@ LOGIN_REDIRECT_URL='/afterlogin'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+RAZORPAY_KEY_ID=BASE_DIR.joinpath("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET=BASE_DIR.joinpath("RAZORPAY_KEY_SECRET")
